@@ -4,6 +4,7 @@
 
 Arsema Yeshidnber
 
+#HIGHLIGHT ABOUT THE SYSTEM
 
 This project focuses on the design and implementation of a hybrid database system for a food delivery platform. It is based on the idea that modern applications require both structured and flexible data handling rather than relying on a single database model. The system supports key operations such as managing customers, restaurants, menus, orders, deliveries, and payments.
 
