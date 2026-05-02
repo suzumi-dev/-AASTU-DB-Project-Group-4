@@ -1,0 +1,111 @@
+{
+  "database": "quickbite_db",
+  "instructions": "To run: Open MongoDB Compass → Connect to localhost:27017 → Create database quickbite_db → For each collection below, create the collection then click Add Data → Insert Document → paste the documents array",
+  "collections": [
+    {
+      "name": "menu_catalog",
+      "description": "Stores full restaurant menus with nested items. Each document is one restaurant containing its entire menu as an embedded array.",
+      "documents": [
+        {
+          "restaurant_id": 1,
+          "restaurant_name": "Yod Abyssinia",
+          "cuisine_type": "Ethiopian",
+          "location": "Bole Road, Addis Ababa",
+          "is_verified": true,
+          "menu_items": [
+            {
+              "item_id": 1,
+              "name": "Doro Wot",
+              "description": "Traditional spicy chicken stew served with injera",
+              "price": 180.00,
+              "category": "Main Course",
+              "calories": 450,
+              "tags": ["spicy", "traditional", "chicken"],
+              "is_vegetarian": false,
+              "is_vegan": false,
+              "is_available": true
+            },
+            {
+              "item_id": 2,
+              "name": "Tibs Firfir",
+              "description": "Sauteed beef with torn injera and spices",
+              "price": 160.00,
+              "category": "Main Course",
+              "calories": 520,
+              "tags": ["spicy", "beef", "traditional"],
+              "is_vegetarian": false,
+              "is_vegan": false,
+              "is_available": true
+            },
+            {
+              "item_id": 3,
+              "name": "Shiro Wot",
+              "description": "Spiced chickpea stew served with injera",
+              "price": 120.00,
+              "category": "Main Course",
+              "calories": 380,
+              "tags": ["vegetarian", "vegan", "traditional"],
+              "is_vegetarian": true,
+              "is_vegan": true,
+              "is_available": true
+            }
+          ],
+          "opening_time": "08:00",
+          "closing_time": "22:00",
+          "avg_prep_time_minutes": 25,
+          "avg_rating": 5.0
+        },
+        {
+          "restaurant_id": 2,
+          "restaurant_name": "Kaldi's Coffee & Kitchen",
+          "cuisine_type": "Fast Food",
+          "location": "Bole Medhanialem, Addis Ababa",
+          "is_verified": true,
+          "menu_items": [
+            {
+              "item_id": 4,
+              "name": "Club Sandwich",
+              "description": "Triple decker sandwich with chicken and vegetables",
+              "price": 135.00,
+              "category": "Sandwich",
+              "calories": 620,
+              "tags": ["chicken", "sandwich", "quick"],
+              "is_vegetarian": false,
+              "is_vegan": false,
+              "is_available": true
+            },
+            {
+              "item_id": 5,
+              "name": "Beef Burger",
+              "description": "Grilled beef patty with cheese and fresh vegetables",
+              "price": 150.00,
+              "category": "Burger",
+              "calories": 750,
+              "tags": ["beef", "burger", "cheese"],
+              "is_vegetarian": false,
+              "is_vegan": false,
+              "is_available": true
+            }
+          ],
+          "opening_time": "07:00",
+          "closing_time": "22:00",
+          "avg_prep_time_minutes": 15,
+          "avg_rating": 4.0
+        },
+        {
+          "restaurant_id": 3,
+          "restaurant_name": "Tomoca Restaurant",
+          "cuisine_type": "Ethiopian",
+          "location": "Piazza, Churchill Road, Addis Ababa",
+          "is_verified": true,
+          "menu_items": [
+            {
+              "item_id": 6,
+              "name": "Kitfo",
+              "description": "Ethiopian minced raw beef with spiced butter",
+              "price": 200.00,
+              "category": "Main Course",
+              "calories": 480,
+              "tags": ["beef", "traditional", "special"],
+              "is_vegetarian": false,
+              "is_vegan": false,
