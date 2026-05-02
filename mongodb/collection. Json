@@ -228,4 +228,210 @@
           },
           "driver": {
             "driver_id": 1,
-            "name": "Mikael Assefa",
+            "name": "Mikael Assefa","vehicle": "Motorcycle"
+          },
+          "items": [
+            { "name": "Doro Wot", "quantity": 1, "unit_price": 180.00, "subtotal": 180.00 },
+            { "name": "Tibs Firfir", "quantity": 1, "unit_price": 160.00, "subtotal": 160.00 }
+          ],
+          "payment": { "method": "mobile_money", "status": "completed", "amount": 373.00, "transaction_id": "TXN-TELE-001-2024" },
+          "pricing": { "subtotal": 340.00, "delivery_fee": 50.00, "surge_multiplier": 1.00, "discount_amount": 17.00, "total_amount": 373.00 },
+          "delivery": { "estimated_minutes": 45, "actual_minutes": 50, "prediction_error": 5, "accuracy_rating": "Excellent" }
+        },
+        {
+          "order_id": 2,
+          "placed_at": "2024-01-15T13:00:00Z",
+          "status": "delivered",
+          "customer": {
+            "customer_id": 2,
+            "name": "Tigist Haile",
+            "phone": "+251911002002",
+            "delivery_address": {
+              "label": "Home",
+              "street": "Piazza Area, Building 7",
+              "sub_city": "Addis Ketema",
+              "city": "Addis Ababa"
+            }
+          },
+          "restaurant": { "restaurant_id": 2, "name": "Kaldi's Coffee & Kitchen" },
+          "driver": { "driver_id": 2, "name": "Biruk Wolde", "vehicle": "Motorcycle" },
+          "items": [
+            { "name": "Club Sandwich", "quantity": 1, "unit_price": 135.00, "subtotal": 135.00 },
+            { "name": "Beef Burger", "quantity": 1, "unit_price": 150.00, "subtotal": 150.00 }
+          ],
+          "payment": { "method": "credit_card", "status": "completed", "amount": 385.00, "transaction_id": "TXN-CARD-002-2024" },
+          "pricing": { "subtotal": 285.00, "delivery_fee": 45.00, "surge_multiplier": 1.20, "discount_amount": 0.00, "total_amount": 385.00 },
+          "delivery": { "estimated_minutes": 42, "actual_minutes": 45, "prediction_error": 3, "accuracy_rating": "Excellent" }
+        },
+        {
+          "order_id": 3,
+          "placed_at": "2024-01-16T19:00:00Z",
+          "status": "delivered",
+          "customer": {
+            "customer_id": 3,
+            "name": "Dawit Tadesse",
+            "phone": "+251911003003",
+            "delivery_address": {
+              "label": "Work",
+              "street": "CMC Road, Office Block B",
+              "sub_city": "Yeka",
+              "city": "Addis Ababa"
+            }
+          },
+          "restaurant": { "restaurant_id": 4, "name": "Pizza Roma" },
+          "driver": { "driver_id": 3, "name": "Henok Tesfaye", "vehicle": "Car" },
+          "items": [
+            { "name": "Margherita Pizza", "quantity": 1, "unit_price": 220.00, "subtotal": 220.00 },
+            { "name": "Pepperoni Pizza", "quantity": 1, "unit_price": 260.00, "subtotal": 260.00 }
+          ],
+          "payment": { "method": "cash", "status": "completed", "amount": 469.50, "transaction_id": null },
+          "pricing": { "subtotal": 455.00, "delivery_fee": 60.00, "surge_multiplier": 1.00, "discount_amount": 45.50, "total_amount": 469.50 },
+          "delivery": { "estimated_minutes": 51, "actual_minutes": 40, "prediction_error": -11, "accuracy_rating": "Fair" }
+        },
+        {
+          "order_id": 4,
+          "placed_at": "2024-01-17T12:30:00Z",
+          "status": "delivered",
+          "customer": {
+            "customer_id": 4,
+            "name": "Selam Bekele",
+            "phone": "+251911004004",
+            "delivery_address": {
+              "label": "Home",
+              "street": "Gerji, Condominium 12C",
+              "sub_city": "Bole",
+              "city": "Addis Ababa"
+            }
+          },
+          "restaurant": { "restaurant_id": 3, "name": "Tomoca Restaurant" },
+          "driver": { "driver_id": 4, "name": "Liya Mengistu", "vehicle": "Bicycle" },
+          "items": [
+            { "name": "Kitfo", "quantity": 1, "unit_price": 200.00, "subtotal": 200.00 },
+            { "name": "Tibs", "quantity": 1, "unit_price": 175.00, "subtotal": 175.00 }
+          ],"payment": { "method": "mobile_money", "status": "completed", "amount": 390.00, "transaction_id": "TXN-TELE-004-2024" },
+          "pricing": { "subtotal": 340.00, "delivery_fee": 50.00, "surge_multiplier": 1.00, "discount_amount": 0.00, "total_amount": 390.00 },
+          "delivery": { "estimated_minutes": 60, "actual_minutes": 50, "prediction_error": -10, "accuracy_rating": "Fair" }
+        }
+      ]
+    },
+    {
+      "name": "customer_reviews",
+      "description": "Rich review documents with multi-dimensional scores, tags and helpful votes. Each document is one customer review for one order.",
+      "documents": [
+        {
+          "review_id": 1,
+          "order_id": 1,
+          "customer": { "customer_id": 1, "name": "Abebe Kebede" },
+          "restaurant": { "restaurant_id": 1, "name": "Yod Abyssinia" },
+          "driver": { "driver_id": 1, "name": "Mikael Assefa" },
+          "scores": { "food_quality": 5, "packaging": 4, "delivery_speed": 5, "driver_behavior": 5, "overall": 5 },
+          "review_text": "Excellent doro wot! Driver was very professional and fast.",
+          "tags": ["excellent", "fast", "professional"],
+          "helpful_votes": 3,
+          "created_at": "2024-01-15T13:30:00Z"
+        },
+        {
+          "review_id": 2,
+          "order_id": 2,
+          "customer": { "customer_id": 2, "name": "Tigist Haile" },
+          "restaurant": { "restaurant_id": 2, "name": "Kaldi's Coffee & Kitchen" },
+          "driver": { "driver_id": 2, "name": "Biruk Wolde" },
+          "scores": { "food_quality": 4, "packaging": 4, "delivery_speed": 3, "driver_behavior": 4, "overall": 4 },
+          "review_text": "Good food but delivery was a bit late. Sandwich was still fresh though.",
+          "tags": ["good food", "late delivery", "fresh"],
+          "helpful_votes": 1,
+          "created_at": "2024-01-15T14:30:00Z"
+        },
+        {
+          "review_id": 3,
+          "order_id": 3,
+          "customer": { "customer_id": 3, "name": "Dawit Tadesse" },
+          "restaurant": { "restaurant_id": 4, "name": "Pizza Roma" },
+          "driver": { "driver_id": 3, "name": "Henok Tesfaye" },
+          "scores": { "food_quality": 5, "packaging": 5, "delivery_speed": 5, "driver_behavior": 5, "overall": 5 },
+          "review_text": "Perfect pizza and super fast delivery. Will definitely order again!",
+          "tags": ["perfect", "fast", "will order again"],
+          "helpful_votes": 5,
+          "created_at": "2024-01-16T20:30:00Z"
+        },
+        {
+          "review_id": 4,
+          "order_id": 4,
+          "customer": { "customer_id": 4, "name": "Selam Bekele" },
+          "restaurant": { "restaurant_id": 3, "name": "Tomoca Restaurant" },
+          "driver": { "driver_id": 4, "name": "Liya Mengistu" },
+          "scores": { "food_quality": 4, "packaging": 3, "delivery_speed": 4, "driver_behavior": 5, "overall": 4 },
+          "review_text": "Kitfo was good but packaging could be better. Driver was very polite.",
+          "tags": ["good food", "poor packaging", "polite driver"],
+          "helpful_votes": 2,
+          "created_at": "2024-01-17T14:00:00Z"
+        }
+      ]
+    },
+    {
+      "name": "driver_activity_logs",
+      "description": "Time-series activity logs per driver per day. Each document contains a full array of location and status events throughout the driver shift.",
+      "documents": [
+        {
+          "log_id": 1,
+          "driver_id": 1,
+          "driver_name": "Mikael Assefa",
+          "date": "2024-01-15",
+          "vehicle": "Motorcycle",
+          "shift_start": "08:00",
+          "shift_end": "20:00",
+          "activity_log": [
+            { "time": "08:00", "status": "online", "location": { "lat": 9.007200, "lng": 38.761500 }, "note": "Started shift" },
+            { "time": "12:05", "status": "on_delivery", "order_id": 1, "location": { "lat": 9.008500, "lng": 38.762100 }, "note": "Picked up from Yod Abyssinia" },
+            { "time": "12:50", "status": "available", "location": { "lat": 9.005401, "lng": 38.763611 }, "note": "Delivered order #1" }
+          ],"summary": { "total_deliveries": 1, "total_distance_km": 2.30, "total_earnings": 75.00, "avg_delivery_time_minutes": 50, "rating_received": 5.0 }
+        },
+        {
+          "log_id": 2,
+          "driver_id": 2,
+          "driver_name": "Biruk Wolde",
+          "date": "2024-01-15",
+          "vehicle": "Motorcycle",
+          "shift_start": "09:00",
+          "shift_end": "21:00",
+          "activity_log": [
+            { "time": "09:00", "status": "online", "location": { "lat": 9.039100, "lng": 38.753400 }, "note": "Started shift" },
+            { "time": "13:05", "status": "on_delivery", "order_id": 2, "location": { "lat": 9.011200, "lng": 38.758900 }, "note": "Picked up from Kaldis" },
+            { "time": "13:45", "status": "available", "location": { "lat": 9.037600, "lng": 38.752800 }, "note": "Delivered order #2" }
+          ],
+          "summary": { "total_deliveries": 1, "total_distance_km": 3.10, "total_earnings": 67.50, "avg_delivery_time_minutes": 45, "rating_received": 4.0 }
+        },
+        {
+          "log_id": 3,
+          "driver_id": 3,
+          "driver_name": "Henok Tesfaye",
+          "date": "2024-01-16",
+          "vehicle": "Car",
+          "shift_start": "10:00",
+          "shift_end": "22:00",
+          "activity_log": [
+            { "time": "10:00", "status": "online", "location": { "lat": 9.048500, "lng": 38.811200 }, "note": "Started shift" },
+            { "time": "19:05", "status": "on_delivery", "order_id": 3, "location": { "lat": 9.047800, "lng": 38.809500 }, "note": "Picked up from Pizza Roma" },
+            { "time": "19:40", "status": "available", "location": { "lat": 9.046300, "lng": 38.810900 }, "note": "Delivered order #3" }
+          ],
+          "summary": { "total_deliveries": 1, "total_distance_km": 4.50, "total_earnings": 90.00, "avg_delivery_time_minutes": 40, "rating_received": 5.0 }
+        },
+        {
+          "log_id": 4,
+          "driver_id": 4,
+          "driver_name": "Liya Mengistu",
+          "date": "2024-01-17",
+          "vehicle": "Bicycle",
+          "shift_start": "08:00",
+          "shift_end": "18:00",
+          "activity_log": [
+            { "time": "08:00", "status": "online", "location": { "lat": 9.013100, "lng": 38.819800 }, "note": "Started shift" },
+            { "time": "12:35", "status": "on_delivery", "order_id": 4, "location": { "lat": 9.038100, "lng": 38.751200 }, "note": "Picked up from Tomoca" },
+            { "time": "13:20", "status": "available", "location": { "lat": 9.012500, "lng": 38.820300 }, "note": "Delivered order #4" }
+          ],
+          "summary": { "total_deliveries": 1, "total_distance_km": 5.20, "total_earnings": 75.00, "avg_delivery_time_minutes": 50, "rating_received": 4.0 }
+        }
+      ]
+    }
+  ]
+}    
