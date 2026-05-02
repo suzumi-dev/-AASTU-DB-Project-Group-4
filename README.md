@@ -3,6 +3,7 @@
 ## Group Members
 - Arsema Yeshidnber - Documentation lead
 - Betelhem Solomon — Backend/Implementation
+- Mading Majok - Documentation Lead
 
    
 ## Description
