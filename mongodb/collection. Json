@@ -108,4 +108,124 @@
               "calories": 480,
               "tags": ["beef", "traditional", "special"],
               "is_vegetarian": false,
+              "is_vegan": false,"is_available": true
+            },
+            {
+              "item_id": 7,
+              "name": "Beyaynetu",
+              "description": "Mixed vegetarian platter with various wots",
+              "price": 140.00,
+              "category": "Platter",
+              "calories": 420,
+              "tags": ["vegetarian", "platter", "traditional"],
+              "is_vegetarian": true,
               "is_vegan": false,
+              "is_available": true
+            },
+            {
+              "item_id": 8,
+              "name": "Tibs",
+              "description": "Pan fried beef or lamb with vegetables",
+              "price": 175.00,
+              "category": "Main Course",
+              "calories": 510,
+              "tags": ["beef", "lamb", "traditional"],
+              "is_vegetarian": false,
+              "is_vegan": false,
+              "is_available": true
+            }
+          ],
+          "opening_time": "08:00",
+          "closing_time": "21:00",
+          "avg_prep_time_minutes": 30,
+          "avg_rating": 4.0
+        },
+        {
+          "restaurant_id": 4,
+          "restaurant_name": "Pizza Roma",
+          "cuisine_type": "Italian",
+          "location": "CMC Area, Ring Road, Addis Ababa",
+          "is_verified": false,
+          "menu_items": [
+            {
+              "item_id": 9,
+              "name": "Margherita Pizza",
+              "description": "Classic tomato sauce with mozzarella and basil",
+              "price": 220.00,
+              "category": "Pizza",
+              "calories": 680,
+              "tags": ["vegetarian", "pizza", "classic"],
+              "is_vegetarian": true,
+              "is_vegan": false,
+              "is_available": true
+            },
+            {
+              "item_id": 10,
+              "name": "Pepperoni Pizza",
+              "description": "Tomato sauce with mozzarella and pepperoni",
+              "price": 260.00,
+              "category": "Pizza",
+              "calories": 820,
+              "tags": ["pepperoni", "pizza", "spicy"],
+              "is_vegetarian": false,
+              "is_vegan": false,
+              "is_available": true
+            },
+            {
+              "item_id": 11,
+              "name": "Pasta Carbonara",
+              "description": "Creamy pasta with bacon and parmesan",
+              "price": 195.00,
+              "category": "Pasta",
+              "calories": 740,
+              "tags": ["pasta", "creamy", "bacon"],
+              "is_vegetarian": false,
+              "is_vegan": false,
+              "is_available": true
+            },
+            {
+              "item_id": 12,
+              "name": "Veggie Pizza",
+              "description": "Fresh seasonal vegetables on tomato sauce",
+              "price": 210.00,
+              "category": "Pizza",
+              "calories": 580,
+              "tags": ["vegetarian", "vegan", "pizza"],
+              "is_vegetarian": true,
+              "is_vegan": true,
+              "is_available": true
+            }
+          ],
+          "opening_time": "10:00",
+          "closing_time": "23:00",
+          "avg_prep_time_minutes": 20,
+          "avg_rating": 5.0
+        }
+      ]
+    },
+    {
+      "name": "order_snapshots",
+      "description": "Denormalized snapshot of each order at the moment it was placed. Contains nested customer, restaurant, driver, items, payment and delivery info in one document.",
+      "documents": [
+        {
+          "order_id": 1,
+          "placed_at": "2024-01-15T12:00:00Z",
+          "status": "delivered",
+          "customer": {
+            "customer_id": 1,
+            "name": "Abebe Kebede",
+            "phone": "+251911001001",
+            "delivery_address": {
+              "label": "Home",
+              "street": "Bole Road, House 42",
+              "sub_city": "Bole",
+              "city": "Addis Ababa"
+            }
+          },
+          "restaurant": {
+            "restaurant_id": 1,
+            "name": "Yod Abyssinia"
+          },
+          "driver": {
+            "driver_id": 1,
+            "name": "Mikael Assefa",
