@@ -34,3 +34,41 @@ INSERT INTO addresses (customer_id, label, street, city, sub_city, woreda, latit
 (3, 'Work', 'CMC Road, Office Block B', 'Addis Ababa', 'Yeka', '06', 9.046300, 38.810900, TRUE),
 (4, 'Home', 'Gerji, Condominium 12C', 'Addis Ababa', 'Bole', '11', 9.012500, 38.820300, TRUE),
 (5, 'Home', 'Megenagna, Behind Total', 'Addis Ababa', 'Yeka', '09', 9.025700, 38.789400, TRUE);
+
+STEP 8: USE quickbite_db;
+
+-- RESTAURANTS DATA
+
+INSERT INTO restaurants (name, cuisine_id, phone, email, street, city, sub_city, woreda, latitude, longitude, avg_prep_time_minutes, is_active, is_verified) VALUES
+('Yod Abyssinia', 1, '+251111001001', 'info@yodabyssinia.com', 'Bole Road, Near Edna Mall', 'Addis Ababa', 'Bole', '03', 9.008500, 38.762100, 25, TRUE, TRUE),
+('Kaldi\'s Coffee & Kitchen', 2, '+251111002002', 'info@kaldis.com', 'Bole Medhanialem Area', 'Addis Ababa', 'Bole', '05', 9.011200, 38.758900, 15, TRUE, TRUE),
+('Tomoca Restaurant', 1, '+251111003003', 'contact@tomoca.com', 'Piazza, Churchill Road', 'Addis Ababa', 'Addis Ketema', '07', 9.038100, 38.751200, 30, TRUE, TRUE),
+('Pizza Roma', 3, '+251111004004', 'hello@pizzaroma.com', 'CMC Area, Ring Road', 'Addis Ababa', 'Yeka', '06', 9.047800, 38.809500, 20, TRUE, FALSE);
+
+-- MENU ITEMS DATA
+
+INSERT INTO menu_items (restaurant_id, name, description, price, category, calories, is_vegetarian, is_vegan, is_spicy) VALUES
+-- Yod Abyssinia menu
+(1, 'Doro Wot', 'Traditional spicy chicken stew served with injera', 180.00, 'Main Course', 450, FALSE, FALSE, TRUE),
+(1, 'Tibs Firfir', 'Sauteed beef with torn injera and spices', 160.00, 'Main Course', 520, FALSE, FALSE, TRUE),
+(1, 'Shiro Wot', 'Spiced chickpea stew served with injera', 120.00, 'Main Course', 380, TRUE, TRUE, FALSE),
+-- Kaldis menu
+(2, 'Club Sandwich', 'Triple decker sandwich with chicken and vegetables', 135.00, 'Sandwich', 620, FALSE, FALSE, FALSE),
+(2, 'Beef Burger', 'Grilled beef patty with cheese and fresh vegetables', 150.00, 'Burger', 750, FALSE, FALSE, FALSE),
+-- Tomoca menu
+(3, 'Kitfo', 'Ethiopian minced raw beef with spiced butter', 200.00, 'Main Course', 480, FALSE, FALSE, FALSE),
+(3, 'Beyaynetu', 'Mixed vegetarian platter with various wots', 140.00, 'Platter', 420, TRUE, FALSE, FALSE),
+(3, 'Tibs', 'Pan fried beef or lamb with vegetables', 175.00, 'Main Course', 510, FALSE, FALSE, FALSE),
+-- Pizza Roma menu
+(4, 'Margherita Pizza', 'Classic tomato sauce with mozzarella and basil', 220.00, 'Pizza', 680, TRUE, FALSE, FALSE),
+(4, 'Pepperoni Pizza', 'Tomato sauce with mozzarella and pepperoni', 260.00, 'Pizza', 820, FALSE, FALSE, FALSE),
+(4, 'Pasta Carbonara', 'Creamy pasta with bacon and parmesan', 195.00, 'Pasta', 740, FALSE, FALSE, FALSE),
+(4, 'Veggie Pizza', 'Fresh seasonal vegetables on tomato sauce', 210.00, 'Pizza', 580, TRUE, TRUE, FALSE);
+
+-- DRIVERS DATA
+  
+INSERT INTO drivers (first_name, last_name, email, phone, password_hash, vehicle_id, license_plate, current_latitude, current_longitude, is_available, rating_avg, total_deliveries) VALUES
+('Mikael', 'Assefa', 'mikael.assefa@driver.com', '+251922001001', 'hashed_drv_1', 2, 'AA-3-45678', 9.007200, 38.761500, TRUE, 4.80, 145),
+('Biruk', 'Wolde', 'biruk.wolde@driver.com', '+251922002002', 'hashed_drv_2', 2, 'AA-2-78901', 9.039100, 38.753400, TRUE, 4.60, 98),
+('Henok', 'Tesfaye', 'henok.tesfaye@driver.com', '+251922003003', 'hashed_drv_3', 3, 'AA-1-23456', 9.048500, 38.811200, FALSE, 4.90, 210),
+('Liya', 'Mengistu', 'liya.mengistu@driver.com', '+251922004004', 'hashed_drv_4', 1, 'AA-4-56789', 9.013100, 38.819800, TRUE, 4.70, 67); 
