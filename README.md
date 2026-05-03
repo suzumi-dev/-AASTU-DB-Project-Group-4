@@ -5,6 +5,7 @@
 - Betelhem Solomon — Backend/Implementation
 - Mading Majok - Documentation Lead
 - Betelhem Nurlachew - ‎Business Analyst
+- Afomiya Aschenaki- Database Designer 
 
    
 ## Description
