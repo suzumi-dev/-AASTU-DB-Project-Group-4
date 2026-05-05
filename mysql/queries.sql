@@ -72,3 +72,16 @@ INSERT INTO drivers (first_name, last_name, email, phone, password_hash, vehicle
 ('Biruk', 'Wolde', 'biruk.wolde@driver.com', '+251922002002', 'hashed_drv_2', 2, 'AA-2-78901', 9.039100, 38.753400, TRUE, 4.60, 98),
 ('Henok', 'Tesfaye', 'henok.tesfaye@driver.com', '+251922003003', 'hashed_drv_3', 3, 'AA-1-23456', 9.048500, 38.811200, FALSE, 4.90, 210),
 ('Liya', 'Mengistu', 'liya.mengistu@driver.com', '+251922004004', 'hashed_drv_4', 1, 'AA-4-56789', 9.013100, 38.819800, TRUE, 4.70, 67); 
+  
+STEP 9:USE quickbite_db;
+  
+-- ORDERS DATA
+  
+INSERT INTO orders (customer_id, restaurant_id, driver_id, delivery_address_id, status, subtotal, delivery_fee, surge_multiplier, discount_amount, total_amount, special_instructions, estimated_delivery_time, actual_delivery_time, placed_at) VALUES
+(1, 1, 1, 1, 'delivered', 340.00, 50.00, 1.00, 17.00, 373.00, 'Please include extra injera', '2024-01-15 12:45:00', '2024-01-15 12:50:00', '2024-01-15 12:00:00'),
+(2, 2, 2, 2, 'delivered', 285.00, 45.00, 1.20, 0.00, 385.00, NULL, '2024-01-15 13:30:00', '2024-01-15 13:45:00', '2024-01-15 13:00:00'),
+(3, 4, 3, 3, 'delivered', 455.00, 60.00, 1.00, 45.50, 469.50, 'Extra cheese on pizza please', '2024-01-16 19:45:00', '2024-01-16 19:40:00', '2024-01-16 19:00:00'),
+(4, 3, 4, 4, 'delivered', 340.00, 50.00, 1.00, 0.00, 390.00, NULL, '2024-01-17 13:00:00', '2024-01-17 13:20:00', '2024-01-17 12:30:00'),
+(5, 1, 1, 5, 'out_for_delivery', 160.00, 50.00, 1.50, 0.00, 290.00, 'Call when arriving', NULL, NULL, '2024-01-17 18:00:00'),
+(1, 4, 2, 1, 'delivered', 415.00, 55.00, 1.00, 0.00, 470.00, NULL, '2024-01-18 20:30:00', '2024-01-18 20:35:00', '2024-01-18 20:00:00');
+  
