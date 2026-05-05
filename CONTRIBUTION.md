@@ -7,3 +7,5 @@
 | Mading Majok | MongoDB collections |
 | Afomiya Aschenaki | Database design,normalization |
 | Betelhem Nurlachew | Database Design, MySQL |
+| Aksah Atlaw | Database design, MySQL |
+
