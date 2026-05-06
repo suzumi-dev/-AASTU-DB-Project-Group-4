@@ -84,4 +84,30 @@ INSERT INTO orders (customer_id, restaurant_id, driver_id, delivery_address_id, 
 (4, 3, 4, 4, 'delivered', 340.00, 50.00, 1.00, 0.00, 390.00, NULL, '2024-01-17 13:00:00', '2024-01-17 13:20:00', '2024-01-17 12:30:00'),
 (5, 1, 1, 5, 'out_for_delivery', 160.00, 50.00, 1.50, 0.00, 290.00, 'Call when arriving', NULL, NULL, '2024-01-17 18:00:00'),
 (1, 4, 2, 1, 'delivered', 415.00, 55.00, 1.00, 0.00, 470.00, NULL, '2024-01-18 20:30:00', '2024-01-18 20:35:00', '2024-01-18 20:00:00');
-  
+  -- ORDER ITEMS DATA
+INSERT INTO order_items (order_id, item_id, quantity, unit_price, subtotal, special_request) VALUES
+-- Order 1: Yod Abyssinia
+(1, 1, 1, 180.00, 180.00, NULL),
+(1, 2, 1, 160.00, 160.00, 'Less spicy please'),
+-- Order 2: Kaldis
+(2, 4, 1, 135.00, 135.00, NULL),
+(2, 5, 1, 150.00, 150.00, 'No onions'),
+-- Order 3: Pizza Roma
+(3, 9, 1, 220.00, 220.00, NULL),
+(3, 10, 1, 260.00, 260.00, 'Well done'),
+-- Order 4: Tomoca
+(4, 6, 1, 200.00, 200.00, NULL),
+(4, 8, 1, 175.00, 175.00, NULL),
+-- Order 5: Yod Abyssinia
+(5, 2, 1, 160.00, 160.00, NULL),
+-- Order 6: Pizza Roma
+(6, 11, 1, 195.00, 195.00, NULL),
+(6, 10, 1, 260.00, 260.00, NULL);
+  -- PAYMENTS DATA
+INSERT INTO payments (order_id, payment_method, payment_status, amount, transaction_id, paid_at) VALUES
+(1, 'mobile_money', 'completed', 373.00, 'TXN-TELE-001-2024', '2024-01-15 12:05:00'),
+(2, 'credit_card', 'completed', 385.00, 'TXN-CARD-002-2024', '2024-01-15 13:05:00'),
+(3, 'cash', 'completed', 469.50, NULL, '2024-01-16 19:40:00'),
+(4, 'mobile_money', 'completed', 390.00, 'TXN-TELE-004-2024', '2024-01-17 12:35:00'),
+(5, 'wallet', 'pending', 290.00, NULL, NULL),
+(6, 'credit_card', 'completed', 470.00, 'TXN-CARD-006-2024', '2024-01-18 20:05:00');
