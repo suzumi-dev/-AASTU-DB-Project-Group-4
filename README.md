@@ -3,7 +3,7 @@
 ## Group Members
 - Arsema Yeshidnber - Documentation lead
 - Betelhem Solomon — Backend/Implementation
-- Mading Majok - Documentation Lead
+- Mading Majok - Project Coordinator 
 - Betelhem Nurlachew - ‎Business Analyst
 - Afomiya Aschenaki- Database Designer
 - Aksah Atlaw- Data Population & Query Implementation
