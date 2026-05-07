@@ -1,4 +1,4 @@
-STEP 7:USE quickbite_db;
+USE quickbite_db;
 
 -- REFERENCE TABLES DATA
 
@@ -35,7 +35,7 @@ INSERT INTO addresses (customer_id, label, street, city, sub_city, woreda, latit
 (4, 'Home', 'Gerji, Condominium 12C', 'Addis Ababa', 'Bole', '11', 9.012500, 38.820300, TRUE),
 (5, 'Home', 'Megenagna, Behind Total', 'Addis Ababa', 'Yeka', '09', 9.025700, 38.789400, TRUE);
 
-STEP 8: USE quickbite_db;
+USE quickbite_db;
 
 -- RESTAURANTS DATA
 
