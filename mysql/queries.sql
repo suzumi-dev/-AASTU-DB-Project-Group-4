@@ -73,8 +73,6 @@ INSERT INTO drivers (first_name, last_name, email, phone, password_hash, vehicle
 ('Henok', 'Tesfaye', 'henok.tesfaye@driver.com', '+251922003003', 'hashed_drv_3', 3, 'AA-1-23456', 9.048500, 38.811200, FALSE, 4.90, 210),
 ('Liya', 'Mengistu', 'liya.mengistu@driver.com', '+251922004004', 'hashed_drv_4', 1, 'AA-4-56789', 9.013100, 38.819800, TRUE, 4.70, 67); 
   
-STEP 9:USE quickbite_db;
-  
 -- ORDERS DATA
   
 INSERT INTO orders (customer_id, restaurant_id, driver_id, delivery_address_id, status, subtotal, delivery_fee, surge_multiplier, discount_amount, total_amount, special_instructions, estimated_delivery_time, actual_delivery_time, placed_at) VALUES
@@ -111,3 +109,51 @@ INSERT INTO payments (order_id, payment_method, payment_status, amount, transact
 (4, 'mobile_money', 'completed', 390.00, 'TXN-TELE-004-2024', '2024-01-17 12:35:00'),
 (5, 'wallet', 'pending', 290.00, NULL, NULL),
 (6, 'credit_card', 'completed', 470.00, 'TXN-CARD-006-2024', '2024-01-18 20:05:00');
+-- RATINGS DATA
+
+INSERT INTO ratings (order_id, customer_id, restaurant_id, driver_id, food_quality_score, packaging_score, delivery_speed_score, driver_behavior_score, overall_score, review_text) VALUES
+(1, 1, 1, 1, 5, 4, 5, 5, 5, 'Excellent doro wot! Driver was very professional and fast.'),
+(2, 2, 2, 2, 4, 4, 3, 4, 4, 'Good food but delivery was a bit late. Sandwich was still fresh though.'),
+(3, 3, 4, 3, 5, 5, 5, 5, 5, 'Perfect pizza and super fast delivery. Will definitely order again!'),
+(4, 4, 3, 4, 4, 3, 4, 5, 4, 'Kitfo was good but packaging could be better. Driver was very polite.');
+
+-- DELIVERY PREDICTIONS DATA
+
+INSERT INTO delivery_predictions (order_id, base_prep_time, distance_km, distance_factor, driver_load_factor, time_of_day_factor, predicted_minutes, actual_minutes, prediction_error) VALUES
+(1, 25, 2.30, 10, 5, 5, 45, 50, 5),
+(2, 15, 3.10, 12, 8, 7, 42, 45, 3),
+(3, 20, 4.50, 18, 3, 10, 51, 40, -11),
+(4, 30, 5.20, 20, 5, 5, 60, 50, -10),
+(5, 25, 3.80, 15, 5, 15, 60, NULL, NULL),
+(6, 20, 4.10, 16, 8, 10, 54, 35, -19);
+
+-- ASSIGNMENT LOG DATA
+
+INSERT INTO assignment_log (order_id, driver_id, proximity_score, load_score, rating_score, vehicle_score, total_score, was_accepted) VALUES
+(1, 1, 9.50, 8.00, 9.60, 8.00, 35.10, TRUE),
+(2, 2, 8.00, 7.50, 9.20, 8.00, 32.70, TRUE),
+(3, 3, 7.50, 9.00, 9.80, 10.00, 36.30, TRUE),
+(4, 4, 8.50, 8.50, 9.40, 6.00, 32.40, TRUE),
+(5, 1, 9.00, 7.00, 9.60, 8.00, 33.60, TRUE),
+(6, 2, 8.00, 8.00, 9.20, 8.00, 33.20, TRUE);
+
+-- SURGE RULES DATA
+
+INSERT INTO surge_rules (rule_name, start_time, end_time, min_active_orders, max_available_drivers, multiplier, is_active) VALUES
+('Lunch Rush', '11:30:00', '13:30:00', 10, 3, 1.20, TRUE),
+('Dinner Peak', '18:00:00', '21:00:00', 15, 2, 1.50, TRUE),
+('Late Night', '22:00:00', '23:59:00', 5, 2, 1.30, TRUE);
+-- LOYALTY EVENTS DATA
+
+INSERT INTO loyalty_events (customer_id, order_id, event_type, points_changed, points_balance_after, description) VALUES
+(1, 1, 'order_completed', 37, 750, 'Earned points for order #1 — 10% of order value'),
+(2, 2, 'order_completed', 39, 200, 'Earned points for order #2 — 10% of order value'),
+(3, 3, 'order_completed', 47, 1600, 'Earned points for order #3 — 10% of order value'),
+(3, NULL, 'tier_upgrade', 0, 1600, 'Upgraded to Gold tier after reaching 1500 points'),
+(4, 4, 'order_completed', 39, 50, 'Earned points for order #4 — 10% of order value');
+
+-- ANOMALY FLAGS DATA
+INSERT INTO anomaly_flags (customer_id, order_id, driver_id, flag_type, severity, description, is_resolved) VALUES
+(2, 2, NULL, 'multiple_payment_methods', 'low', 'Customer used 3 different payment methods in 7 days — monitoring for fraud', FALSE),
+(NULL, 5, NULL, 'abnormal_order_value', 'medium', 'Order total unusually low compared to customer average — possible coupon abuse', FALSE),
+(NULL, NULL, 3, 'suspicious_location', 'high', 'Driver location ping shows impossible travel speed between two checkpoints', FALSE);    
