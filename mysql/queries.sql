@@ -156,4 +156,113 @@ INSERT INTO loyalty_events (customer_id, order_id, event_type, points_changed, p
 INSERT INTO anomaly_flags (customer_id, order_id, driver_id, flag_type, severity, description, is_resolved) VALUES
 (2, 2, NULL, 'multiple_payment_methods', 'low', 'Customer used 3 different payment methods in 7 days — monitoring for fraud', FALSE),
 (NULL, 5, NULL, 'abnormal_order_value', 'medium', 'Order total unusually low compared to customer average — possible coupon abuse', FALSE),
-(NULL, NULL, 3, 'suspicious_location', 'high', 'Driver location ping shows impossible travel speed between two checkpoints', FALSE);    
+(NULL, NULL, 3, 'suspicious_location', 'high', 'Driver location ping shows impossible travel speed between two checkpoints', FALSE);   
+
+
+-- ============================================
+-- VIEW 1: ORDER SUMMARY VIEW
+-- shows every order with customer name,
+-- restaurant name, driver name and status
+-- ============================================
+
+CREATE VIEW vw_order_summary AS
+SELECT
+    o.order_id,
+    CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
+    c.phone AS customer_phone,
+    r.name AS restaurant_name,
+    CONCAT(d.first_name, ' ', d.last_name) AS driver_name,
+    o.status,
+    o.subtotal,
+    o.delivery_fee,
+    o.surge_multiplier,
+    o.discount_amount,
+    o.total_amount,
+    o.placed_at,
+    o.estimated_delivery_time,
+    o.actual_delivery_time
+FROM orders o
+JOIN customers c ON o.customer_id = c.customer_id
+JOIN restaurants r ON o.restaurant_id = r.restaurant_id
+LEFT JOIN drivers d ON o.driver_id = d.driver_id;
+
+-- ============================================
+-- VIEW 2: DELIVERY PREDICTION ACCURACY VIEW
+-- compares predicted vs actual delivery time
+-- and calculates accuracy percentage
+-- ============================================
+
+CREATE VIEW vw_prediction_accuracy AS
+SELECT
+    dp.prediction_id,
+    o.order_id,
+    r.name AS restaurant_name,
+    dp.predicted_minutes,
+    dp.actual_minutes,
+    dp.prediction_error,
+    CASE
+        WHEN dp.prediction_error IS NULL THEN 'In Progress'
+        WHEN ABS(dp.prediction_error) <= 5 THEN 'Excellent'
+        WHEN ABS(dp.prediction_error) <= 10 THEN 'Good'
+        WHEN ABS(dp.prediction_error) <= 20 THEN 'Fair'
+        ELSE 'Poor'
+    END AS accuracy_rating,
+    CASE
+        WHEN dp.actual_minutes IS NOT NULL
+        THEN ROUND(100 - (ABS(dp.prediction_error) / dp.predicted_minutes * 100), 2)
+        ELSE NULL
+    END AS accuracy_percent
+FROM delivery_predictions dp
+JOIN orders o ON dp.order_id = o.order_id
+JOIN restaurants r ON o.restaurant_id = r.restaurant_id;
+
+-- ============================================
+-- VIEW 3: RESTAURANT PERFORMANCE VIEW
+-- shows each restaurant's average scores,
+-- total orders and average prep accuracy
+-- ============================================
+
+CREATE VIEW vw_restaurant_performance AS
+SELECT
+    r.restaurant_id,
+    r.name AS restaurant_name,
+    ct.cuisine_name,
+    COUNT(DISTINCT o.order_id) AS total_orders,
+    ROUND(AVG(rat.food_quality_score), 2) AS avg_food_quality,
+    ROUND(AVG(rat.packaging_score), 2) AS avg_packaging,
+    ROUND(AVG(rat.overall_score), 2) AS avg_overall_rating,
+    ROUND(AVG(o.total_amount), 2) AS avg_order_value,
+    SUM(o.total_amount) AS total_revenue
+FROM restaurants r
+LEFT JOIN cuisine_types ct ON r.cuisine_id = ct.cuisine_id
+LEFT JOIN orders o ON r.restaurant_id = o.restaurant_id
+LEFT JOIN ratings rat ON o.order_id = rat.order_id
+GROUP BY r.restaurant_id, r.name, ct.cuisine_name;
+
+-- ============================================
+-- VIEW 4: DRIVER PERFORMANCE VIEW
+-- shows each driver's delivery stats,
+-- average scores and assignment breakdown
+-- ============================================
+
+CREATE VIEW vw_driver_performance AS
+SELECT
+    d.driver_id,
+    CONCAT(d.first_name, ' ', d.last_name) AS driver_name,
+    vt.vehicle_name,
+    d.total_deliveries,
+    d.rating_avg,
+    COUNT(DISTINCT o.order_id) AS orders_in_system,
+    ROUND(AVG(rat.delivery_speed_score), 2) AS avg_speed_score,
+    ROUND(AVG(rat.driver_behavior_score), 2) AS avg_behavior_score,
+    ROUND(AVG(al.total_score), 2) AS avg_assignment_score
+FROM drivers d
+LEFT JOIN vehicle_types vt ON d.vehicle_id = vt.vehicle_id
+LEFT JOIN orders o ON d.driver_id = o.driver_id
+LEFT JOIN ratings rat ON o.order_id = rat.order_id
+LEFT JOIN assignment_log al ON d.driver_id = al.driver_id
+GROUP BY d.driver_id, d.first_name, d.last_name, vt.vehicle_name,
+         d.total_deliveries, d.rating_avg;                                  
+
+
+
