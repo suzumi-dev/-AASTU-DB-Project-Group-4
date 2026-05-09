@@ -265,4 +265,205 @@ GROUP BY d.driver_id, d.first_name, d.last_name, vt.vehicle_name,
          d.total_deliveries, d.rating_avg;                                  
 
 
+-- change delimiter so MySQL does not get
+-- confused by the semicolons inside procedures
+DELIMITER $$
+
+-- ============================================
+-- PROCEDURE 1: ASSIGN BEST DRIVER
+-- scores all available drivers for an order
+-- and assigns the highest scoring one
+-- ============================================
+
+CREATE PROCEDURE sp_assign_best_driver(IN p_order_id INT)
+BEGIN
+    DECLARE v_best_driver_id INT;
+    DECLARE v_best_score DECIMAL(5,2);
+    DECLARE v_restaurant_lat DECIMAL(9,6);
+    DECLARE v_restaurant_lng DECIMAL(9,6);
+
+    -- get restaurant location for this order
+    SELECT r.latitude, r.longitude
+    INTO v_restaurant_lat, v_restaurant_lng
+    FROM orders o
+    JOIN restaurants r ON o.restaurant_id = r.restaurant_id
+    WHERE o.order_id = p_order_id;
+
+    -- score every available driver and pick the best
+    SELECT
+        d.driver_id,
+        ROUND(
+            -- proximity score: closer = higher score (max 10)
+            (10 - LEAST(
+                SQRT(POW(d.current_latitude - v_restaurant_lat, 2) +
+                     POW(d.current_longitude - v_restaurant_lng, 2)) * 100
+            , 10)) +
+            -- load score: fewer active orders = higher score
+            (10 - (SELECT COUNT(*) FROM orders o2
+                   WHERE o2.driver_id = d.driver_id
+                   AND o2.status IN ('confirmed','preparing','out_for_delivery'))) +
+            -- rating score: higher rating = higher score
+            d.rating_avg * 2 +
+            -- vehicle score: car scores highest
+            CASE d.vehicle_id WHEN 3 THEN 10 WHEN 2 THEN 8 ELSE 6 END
+        , 2) AS total_score
+    INTO v_best_driver_id, v_best_score
+    FROM drivers d
+    WHERE d.is_available = TRUE AND d.is_active = TRUE
+    ORDER BY total_score DESC
+    LIMIT 1;
+
+    -- log the assignment
+    INSERT INTO assignment_log (order_id, driver_id, total_score)
+    VALUES (p_order_id, v_best_driver_id, v_best_score);
+
+    -- update the order with assigned driver
+    UPDATE orders
+    SET driver_id = v_best_driver_id
+    WHERE order_id = p_order_id;
+
+    SELECT CONCAT('Driver ', v_best_driver_id, ' assigned to order ',
+           p_order_id, ' with score ', v_best_score) AS result;
+END$$
+
+-- ============================================
+-- PROCEDURE 2: CALCULATE DELIVERY PREDICTION
+-- computes estimated delivery time using
+-- multiple factors and stores the result
+-- ============================================
+
+CREATE PROCEDURE sp_calculate_delivery_prediction(IN p_order_id INT)
+BEGIN
+    DECLARE v_prep_time INT;
+    DECLARE v_distance DECIMAL(6,2);
+    DECLARE v_distance_factor INT;
+    DECLARE v_driver_load INT;
+    DECLARE v_time_factor INT;
+    DECLARE v_predicted INT;
+    DECLARE v_hour INT;
+
+    -- get base prep time from restaurant
+    SELECT r.avg_prep_time_minutes
+    INTO v_prep_time
+    FROM orders o
+    JOIN restaurants r ON o.restaurant_id = r.restaurant_id
+    WHERE o.order_id = p_order_id;
+
+    -- simulate distance factor (in real app this uses GPS)
+    SET v_distance = ROUND(2 + (RAND() * 6), 2);
+    SET v_distance_factor = ROUND(v_distance * 3);
+
+    -- get current driver load factor
+    SELECT COUNT(*) INTO v_driver_load
+    FROM orders o
+    JOIN orders o2 ON o.driver_id = o2.driver_id
+    WHERE o.order_id = p_order_id
+    AND o2.status IN ('confirmed', 'preparing', 'out_for_delivery');
+
+    -- time of day factor (peak hours cost more time)
+    SET v_hour = HOUR(NOW());
+    SET v_time_factor = CASE
+        WHEN v_hour BETWEEN 11 AND 13 THEN 10
+        WHEN v_hour BETWEEN 18 AND 21 THEN 15
+        WHEN v_hour BETWEEN 22 AND 23 THEN 8
+        ELSE 5
+    END;
+
+    -- calculate total predicted minutes
+    SET v_predicted = v_prep_time + v_distance_factor
+                    + v_driver_load + v_time_factor;
+
+
+-- store the prediction
+    INSERT INTO delivery_predictions (
+        order_id, base_prep_time, distance_km,
+        distance_factor, driver_load_factor,
+        time_of_day_factor, predicted_minutes
+    ) VALUES (
+        p_order_id, v_prep_time, v_distance,
+        v_distance_factor, v_driver_load,
+        v_time_factor, v_predicted
+    ) ON DUPLICATE KEY UPDATE
+        predicted_minutes = v_predicted,
+        distance_km = v_distance;
+
+    -- update order estimated delivery time
+    UPDATE orders
+    SET estimated_delivery_time =
+        DATE_ADD(placed_at, INTERVAL v_predicted MINUTE)
+    WHERE order_id = p_order_id;
+
+    SELECT CONCAT('Predicted delivery time: ', v_predicted,
+           ' minutes for order ', p_order_id) AS result;
+END$$
+
+-- ============================================
+-- PROCEDURE 3: DETECT ANOMALIES
+-- checks all orders for suspicious patterns
+-- and inserts flags into anomaly_flags table
+-- ============================================
+
+CREATE PROCEDURE sp_detect_anomalies()
+BEGIN
+
+    -- flag 1: customers with high refund rate
+    INSERT INTO anomaly_flags (customer_id, flag_type, severity, description)
+    SELECT DISTINCT
+        p.order_id,
+        'high_refund_rate',
+        'high',
+        CONCAT('Customer has refunded more than 2 orders in the last 30 days')
+    FROM payments p
+    WHERE p.payment_status = 'refunded'
+    AND p.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+    GROUP BY p.order_id
+    HAVING COUNT(*) > 2;
+
+    -- flag 2: rapid duplicate orders (same customer, same restaurant, within 10 minutes)
+    INSERT INTO anomaly_flags (customer_id, order_id, flag_type, severity, description)
+    SELECT
+        o1.customer_id,
+        o1.order_id,
+        'rapid_duplicate_order',
+        'medium',
+        CONCAT('Customer placed duplicate order within 10 minutes at same restaurant')
+    FROM orders o1
+    JOIN orders o2 ON o1.customer_id = o2.customer_id
+        AND o1.restaurant_id = o2.restaurant_id
+        AND o1.order_id != o2.order_id
+        AND ABS(TIMESTAMPDIFF(MINUTE, o1.placed_at, o2.placed_at)) <= 10
+    WHERE NOT EXISTS (
+        SELECT 1 FROM anomaly_flags af
+        WHERE af.order_id = o1.order_id
+        AND af.flag_type = 'rapid_duplicate_order'
+    );
+
+    -- flag 3: abnormal order value (3x above customer average)
+    INSERT INTO anomaly_flags (customer_id, order_id, flag_type, severity, description)
+    SELECT
+        o.customer_id,
+        o.order_id,
+        'abnormal_order_value',
+        'medium',
+        CONCAT('Order value is 3x above this customers average order value')
+    FROM orders o
+    JOIN (
+        SELECT customer_id, AVG(total_amount) AS avg_amount
+        FROM orders
+        GROUP BY customer_id
+    ) avg_orders ON o.customer_id = avg_orders.customer_id
+    WHERE o.total_amount > avg_orders.avg_amount * 3
+    AND NOT EXISTS (
+        SELECT 1 FROM anomaly_flags af
+        WHERE af.order_id = o.order_id
+        AND af.flag_type = 'abnormal_order_value'
+    );
+
+    SELECT 'Anomaly detection completed' AS result;
+END$$
+
+-- reset delimiter back to normal
+DELIMITER ;              
+
+
 
