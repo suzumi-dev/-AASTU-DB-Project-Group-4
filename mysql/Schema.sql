@@ -20,9 +20,9 @@ CREATE TABLE loyalty_tiers (
     discount_percent DECIMAL(4,2) NOT NULL,
     description VARCHAR(255)
 );
--- ============================================
+
 -- CUSTOMERS TABLE
--- ============================================
+
 
 CREATE TABLE customers (
     customer_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -40,9 +40,8 @@ CREATE TABLE customers (
     FOREIGN KEY (tier_id) REFERENCES loyalty_tiers(tier_id)
 );
 
--- ============================================
 -- ADDRESSES TABLE
--- ============================================
+
 
 CREATE TABLE addresses (
     address_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -58,9 +57,9 @@ CREATE TABLE addresses (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON DELETE CASCADE
 );
--- ============================================
+
 -- RESTAURANTS TABLE
--- ============================================
+
 
 CREATE TABLE restaurants (
     restaurant_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -84,9 +83,9 @@ CREATE TABLE restaurants (
     FOREIGN KEY (cuisine_id) REFERENCES cuisine_types(cuisine_id)
 );
 
--- ============================================
+
 -- DRIVERS TABLE
--- ============================================
+
 
 CREATE TABLE drivers (
     driver_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -109,9 +108,8 @@ CREATE TABLE drivers (
     FOREIGN KEY (vehicle_id) REFERENCES vehicle_types(vehicle_id)
 );
 
--- ============================================
 -- MENU ITEMS TABLE
--- ============================================
+
 
 CREATE TABLE menu_items (
     item_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -131,9 +129,9 @@ CREATE TABLE menu_items (
     FOREIGN KEY (restaurant_id) REFERENCES restaurants(restaurant_id) ON DELETE CASCADE
 );
 
--- ============================================
+
 -- ORDERS TABLE
--- ============================================
+
 
 CREATE TABLE orders (
     order_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -166,9 +164,8 @@ CREATE TABLE orders (
     FOREIGN KEY (delivery_address_id) REFERENCES addresses(address_id)
 );
 
--- ============================================
+
 -- ORDER ITEMS TABLE
--- ============================================
 
 CREATE TABLE order_items (
     order_item_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -182,9 +179,9 @@ CREATE TABLE order_items (
     FOREIGN KEY (item_id) REFERENCES menu_items(item_id)
 );
 
--- ============================================
+
 -- PAYMENTS TABLE
--- ============================================
+
 
 CREATE TABLE payments (
     payment_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -210,9 +207,9 @@ CREATE TABLE payments (
     FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE
 ); 
 
--- ============================================
+
 -- RATINGS TABLE
--- ============================================
+
 
 CREATE TABLE ratings (
     rating_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -233,9 +230,9 @@ CREATE TABLE ratings (
     FOREIGN KEY (driver_id) REFERENCES drivers(driver_id)
 );
 
--- ============================================
+
 -- DELIVERY PREDICTIONS TABLE
--- ============================================
+
 
 CREATE TABLE delivery_predictions (
     prediction_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -252,9 +249,9 @@ CREATE TABLE delivery_predictions (
     FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE
 );
 
--- ============================================
+
 -- DRIVER ASSIGNMENT LOG TABLE
--- ============================================
+
 
 CREATE TABLE assignment_log (
     assignment_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -271,9 +268,9 @@ CREATE TABLE assignment_log (
     FOREIGN KEY (driver_id) REFERENCES drivers(driver_id)
 );
 
--- ============================================
+
 -- SURGE RULES TABLE
--- ============================================
+
 
 CREATE TABLE surge_rules (
     rule_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -287,9 +284,9 @@ CREATE TABLE surge_rules (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ============================================
+
 -- LOYALTY EVENTS TABLE
--- ============================================
+
 
 CREATE TABLE loyalty_events (
     event_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -311,9 +308,9 @@ CREATE TABLE loyalty_events (
     FOREIGN KEY (order_id) REFERENCES orders(order_id)
 );
 
--- ============================================
+
 -- ANOMALY FLAGS TABLE
--- ============================================
+
 CREATE TABLE anomaly_flags (
     flag_id INT AUTO_INCREMENT PRIMARY KEY,
     customer_id INT,
