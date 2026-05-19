@@ -265,8 +265,7 @@ GROUP BY d.driver_id, d.first_name, d.last_name, vt.vehicle_name,
          d.total_deliveries, d.rating_avg;                                  
 
 
--- change delimiter so MySQL does not get
--- confused by the semicolons inside procedures
+
 DELIMITER $$
 
 -- ============================================
@@ -462,7 +461,7 @@ BEGIN
     SELECT 'Anomaly detection completed' AS result;
 END$$
 
--- reset delimiter back to normal
+
 DELIMITER ;              
 
 
