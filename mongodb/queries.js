@@ -1,24 +1,19 @@
-// ============================================
 // QuickBite DB — MongoDB Queries
 // File: queries.js
-// ============================================
 
-// select the database
 use("quickbite_db");
 
-// ============================================
 // QUERY 1: FIND ALL MENUS FOR ETHIOPIAN RESTAURANTS
-// ============================================
+
 
 db.menu_catalog.find(
   { cuisine_type: "Ethiopian" },
   { restaurant_name: 1, menu_items: 1, avg_rating: 1 }
 );
 
-// ============================================
-// QUERY 2: FIND ALL VEGETARIAN ITEMS ACROSS
-// ALL RESTAURANTS
-// ============================================
+
+// QUERY 2: FIND ALL VEGETARIAN ITEMS ACROSS ALL RESTAURANTS
+
 
 db.menu_catalog.aggregate([
   { $unwind: "$menu_items" },
@@ -33,10 +28,7 @@ db.menu_catalog.aggregate([
   }
 ]);
 
-// ============================================
-// QUERY 3: FIND ALL DELIVERED ORDERS WITH
-// SURGE PRICING APPLIED
-// ============================================
+// QUERY 3: FIND ALL DELIVERED ORDERS WITH SURGE PRICING APPLIED
 
 db.order_snapshots.find(
   {
@@ -52,10 +44,7 @@ db.order_snapshots.find(
   }
 );
 
-// ============================================
-// QUERY 4: CALCULATE AVERAGE DELIVERY TIME
-// PER RESTAURANT FROM ORDER SNAPSHOTS
-// ============================================
+// QUERY 4: CALCULATE AVERAGE DELIVERY TIME PER RESTAURANT FROM ORDER SNAPSHOTS
 
 db.order_snapshots.aggregate([
   { $match: { "delivery.actual_minutes": { $exists: true } } },
@@ -70,9 +59,7 @@ db.order_snapshots.aggregate([
   { $sort: { avg_delivery_minutes: 1 } }
 ]);
 
-// ============================================
 // QUERY 5: FIND TOP RATED REVIEWS (OVERALL 5)
-// ============================================
 
 db.customer_reviews.find(
   { "scores.overall": 5 },
@@ -85,10 +72,9 @@ db.customer_reviews.find(
   }
 ).sort({ helpful_votes: -1 });
 
-// ============================================
-// QUERY 6: AVERAGE SCORES PER RESTAURANT
-// FROM CUSTOMER REVIEWS
-// ============================================
+
+// QUERY 6: AVERAGE SCORES PER RESTAURANT FROM CUSTOMER REVIEWS
+
 
 db.customer_reviews.aggregate([
   {
@@ -105,10 +91,9 @@ db.customer_reviews.aggregate([
   { $sort: { avg_overall: -1 } }
 ]);
 
-// ============================================
-// QUERY 7: FIND DRIVERS WITH MORE THAN
-// 1 DELIVERY IN ACTIVITY LOGS
-// ============================================
+
+// QUERY 7: FIND DRIVERS WITH MORE THAN 1 DELIVERY IN ACTIVITY LOGS
+
 
 db.driver_activity_logs.find(
   { "summary.total_deliveries": { $gte: 1 } },
@@ -122,10 +107,9 @@ db.driver_activity_logs.find(
   }
 ).sort({ "summary.total_earnings": -1 });
 
-// ============================================
-// QUERY 8: UPDATE MENU ITEM PRICE
-// increase Doro Wot price by 20 birr
-// ============================================
+
+// QUERY 8: UPDATE MENU ITEM PRICE increase Doro Wot price by 20 birr
+
 
 db.menu_catalog.updateOne(
   {
@@ -137,9 +121,8 @@ db.menu_catalog.updateOne(
   }
 );
 
-// ============================================
+
 // QUERY 9: ADD A NEW REVIEW TAG TO A DOCUMENT
-// ============================================
 
 db.customer_reviews.updateOne(
   { review_id: 1 },
@@ -148,9 +131,9 @@ db.customer_reviews.updateOne(
   }
 );
 
-// ============================================
+
 // QUERY 10: COUNT ORDERS PER PAYMENT METHOD
-// ============================================
+
 
 db.order_snapshots.aggregate([
   {
