@@ -592,6 +592,172 @@ BEGIN
 END$$
 
 DELIMITER;
+-- QUERY 1: OVERALL PREDICTION ACCURACY REPORT
+-- shows how accurate our delivery predictions are across all completed orders
+
+SELECT
+    COUNT(*) AS total_predictions,
+    ROUND(AVG(ABS(prediction_error)), 2) AS avg_error_minutes,
+    SUM(CASE WHEN ABS(prediction_error) <= 5 THEN 1 ELSE 0 END) AS excellent_count,
+    SUM(CASE WHEN ABS(prediction_error) BETWEEN 6 AND 10 THEN 1 ELSE 0 END) AS good_count,
+    SUM(CASE WHEN ABS(prediction_error) BETWEEN 11 AND 20 THEN 1 ELSE 0 END) AS fair_count,
+    SUM(CASE WHEN ABS(prediction_error) > 20 THEN 1 ELSE 0 END) AS poor_count,
+    ROUND(AVG(CASE
+        WHEN actual_minutes IS NOT NULL
+        THEN 100 - (ABS(prediction_error) / predicted_minutes * 100)
+        ELSE NULL
+    END), 2) AS avg_accuracy_percent
+FROM delivery_predictions
+WHERE actual_minutes IS NOT NULL;
+
+-- QUERY 2: DRIVER ASSIGNMENT SCORE BREAKDOWN
+-- shows what factors influenced each driver assignment decision
+
+SELECT
+    al.assignment_id,
+    o.order_id,
+    CONCAT(d.first_name, ' ', d.last_name) AS assigned_driver,
+    vt.vehicle_name,
+    al.proximity_score,
+    al.load_score,
+    al.rating_score,
+    al.vehicle_score,
+    al.total_score,
+    CONCAT(r.name) AS restaurant,
+    al.assigned_at
+FROM assignment_log al
+JOIN orders o ON al.order_id = o.order_id
+JOIN drivers d ON al.driver_id = d.driver_id
+JOIN restaurants r ON o.restaurant_id = r.restaurant_id
+JOIN vehicle_types vt ON d.vehicle_id = vt.vehicle_id
+ORDER BY al.total_score DESC;
+
+-- QUERY 3: REVENUE REPORT WITH SURGE ANALYSIS
+-- compares normal vs surge pricing revenue
+
+
+SELECT
+    CASE
+        WHEN surge_multiplier = 1.00 THEN 'Normal Pricing'
+        WHEN surge_multiplier BETWEEN 1.01 AND 1.30 THEN 'Low Surge'
+        WHEN surge_multiplier BETWEEN 1.31 AND 1.50 THEN 'High Surge'
+        ELSE 'Extreme Surge'
+    END AS pricing_type,
+    COUNT(*) AS total_orders,
+    ROUND(AVG(total_amount), 2) AS avg_order_value,
+    ROUND(SUM(total_amount), 2) AS total_revenue,
+    ROUND(AVG(delivery_fee), 2) AS avg_delivery_fee
+FROM orders
+WHERE status = 'delivered'
+GROUP BY pricing_type
+ORDER BY total_revenue DESC;
+
+
+-- QUERY 4: CUSTOMER LOYALTY REPORT
+-- shows each customer loyalty status, points, tier and spending summary
+
+
+SELECT
+    CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
+    c.email,
+    lt.tier_name AS current_tier,
+    c.loyalty_points AS current_points,
+    next_tier.tier_name AS next_tier,
+    next_tier.min_points - c.loyalty_points AS points_needed_for_upgrade,
+    COUNT(DISTINCT o.order_id) AS total_orders,
+    ROUND(SUM(o.total_amount), 2) AS total_spent,
+    ROUND(AVG(o.total_amount), 2) AS avg_order_value
+FROM customers c
+JOIN loyalty_tiers lt ON c.tier_id = lt.tier_id
+LEFT JOIN loyalty_tiers next_tier
+    ON next_tier.min_points > c.loyalty_points
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+    AND o.status = 'delivered'
+GROUP BY c.customer_id, c.first_name, c.last_name,
+         c.email, lt.tier_name, c.loyalty_points,
+         next_tier.tier_name, next_tier.min_points
+ORDER BY c.loyalty_points 
+
+-- QUERY 5: RESTAURANT PERFORMANCE RANKING
+-- ranks restaurants by revenue, rating and order volume
+
+
+SELECT
+    vp.restaurant_name,
+    vp.cuisine_name,
+    vp.total_orders,
+    vp.avg_overall_rating,
+    vp.avg_food_quality,
+    vp.avg_packaging,
+    vp.total_revenue,
+    vp.avg_order_value,
+    RANK() OVER (ORDER BY vp.total_revenue DESC) AS revenue_rank,
+    RANK() OVER (ORDER BY vp.avg_overall_rating DESC) AS rating_rank
+FROM vw_restaurant_performance vp
+ORDER BY revenue_rank;
+-- QUERY 6: ANOMALY FLAGS SUMMARY REPORT
+-- shows all unresolved flags grouped by severity for management review 
+
+SELECT
+    af.severity,
+    af.flag_type,
+    COUNT(*) AS total_flags,
+    SUM(CASE WHEN af.is_resolved = FALSE THEN 1 ELSE 0 END) AS unresolved,
+    SUM(CASE WHEN af.is_resolved = TRUE THEN 1 ELSE 0 END) AS resolved,
+    GROUP_CONCAT(
+        DISTINCT CONCAT('Order #', af.order_id)
+        ORDER BY af.created_at DESC
+        SEPARATOR ', '
+    ) AS affected_orders
+FROM anomaly_flags af
+GROUP BY af.severity, af.flag_type
+ORDER BY
+    FIELD(af.severity, 'high', 'medium', 'low'),
+    af.flag_type;
+
+
+-- QUERY 7: RECOMMENDATION ENGINE
+-- finds items popular with similar customers :customers who ordered same restaurant as you
+
+
+SELECT
+    mi.name AS recommended_item,
+    r.name AS restaurant_name,
+    mi.price,
+    mi.category,
+    COUNT(oi.order_item_id) AS times_ordered,
+    ROUND(AVG(rat.food_quality_score), 2) AS avg_food_rating
+FROM menu_items mi
+JOIN order_items oi ON mi.item_id = oi.item_id
+JOIN orders o ON oi.order_id = o.order_id
+JOIN restaurants r ON mi.restaurant_id = r.restaurant_id
+LEFT JOIN ratings rat ON o.order_id = rat.order_id
+WHERE mi.restaurant_id IN (
+    -- restaurants ordered from by similar customers
+    SELECT DISTINCT o2.restaurant_id
+    FROM orders o2
+    WHERE o2.customer_id IN (
+        -- customers who ordered from same restaurants as customer 1
+        SELECT DISTINCT o3.customer_id
+        FROM orders o3
+        WHERE o3.restaurant_id IN (
+            SELECT restaurant_id FROM orders
+            WHERE customer_id = 1
+        )
+        AND o3.customer_id != 1
+    )
+)
+-- exclude items customer 1 already ordered
+AND mi.item_id NOT IN (
+    SELECT oi2.item_id
+    FROM order_items oi2
+    JOIN orders o4 ON oi2.order_id = o4.order_id
+    WHERE o4.customer_id = 1
+)
+AND mi.is_available = TRUE
+GROUP BY mi.item_id, mi.name, r.name, mi.price, mi.category
+ORDER BY times_ordered DESC, avg_food_rating DESC
+LIMIT 5;
 
 
 
