@@ -462,7 +462,136 @@ BEGIN
 END$$
 
 
-DELIMITER ;              
+DELIMITER ;   
+
+DELIMITER $$
+
+-- TRIGGER 1: AFTER ORDER DELIVERED
+-- when an order status changes to delivered:
+-- automatically adds loyalty points to customer
+-- and updates driver total deliveries count
+
+CREATE TRIGGER trg_after_order_delivered
+AFTER UPDATE ON orders
+FOR EACH ROW
+BEGIN
+    DECLARE v_points_earned INT;
+
+    -- only fire when status changes TO delivered
+    IF NEW.status = 'delivered' AND OLD.status != 'delivered' THEN
+
+        -- calculate points earned (10% of total amount)
+        SET v_points_earned = ROUND(NEW.total_amount * 0.10);
+
+        -- add points to customer balance
+        UPDATE customers
+        SET loyalty_points = loyalty_points + v_points_earned
+        WHERE customer_id = NEW.customer_id;
+
+        -- log the loyalty event
+        INSERT INTO loyalty_events (
+            customer_id,
+            order_id,
+            event_type,
+            points_changed,
+            points_balance_after,
+            description
+        )
+        SELECT
+            NEW.customer_id,
+            NEW.order_id,
+            'order_completed',
+            v_points_earned,
+            loyalty_points,
+            CONCAT('Points earned for order #', NEW.order_id)
+        FROM customers
+        WHERE customer_id = NEW.customer_id;
+
+        -- update driver delivery count
+        UPDATE drivers
+        SET total_deliveries = total_deliveries + 1
+        WHERE driver_id = NEW.driver_id;
+
+    END IF;
+END$$
+
+-- TRIGGER 2: AFTER RATING INSERTED
+-- when a new rating is added:
+-- automatically updates the restaurant and
+-- driver average rating scores
+
+
+CREATE TRIGGER trg_after_rating_inserted
+AFTER INSERT ON ratings
+FOR EACH ROW
+BEGIN
+    -- update restaurant average rating
+    UPDATE restaurants r
+    SET r.avg_prep_time_minutes = r.avg_prep_time_minutes
+    WHERE r.restaurant_id = NEW.restaurant_id;
+
+    -- update driver average rating
+    UPDATE drivers
+    SET rating_avg = (
+        SELECT ROUND(AVG(overall_score), 2)
+        FROM ratings
+        WHERE driver_id = NEW.driver_id
+    )
+    WHERE driver_id = NEW.driver_id;
+END$$
+
+-- TRIGGER 3: AFTER LOYALTY POINTS UPDATE
+-- when a customer loyalty points change:
+-- automatically checks if they qualify
+-- for a tier upgrade and upgrades them
+
+
+CREATE TRIGGER trg_loyalty_tier_upgrade
+AFTER UPDATE ON customers
+FOR EACH ROW
+BEGIN
+    DECLARE v_new_tier_id INT;
+
+    -- only fire when points actually changed
+    IF NEW.loyalty_points != OLD.loyalty_points THEN
+
+        -- find which tier customer now qualifies for
+        SELECT tier_id INTO v_new_tier_id
+        FROM loyalty_tiers
+        WHERE min_points <= NEW.loyalty_points
+        ORDER BY min_points DESC
+        LIMIT 1;
+
+        -- if tier changed then upgrade and log it
+        IF v_new_tier_id != NEW.tier_id THEN
+
+            UPDATE customers
+            SET tier_id = v_new_tier_id
+            WHERE customer_id = NEW.customer_id;
+
+            INSERT INTO loyalty_events (
+                customer_id,
+                event_type,
+                points_changed,
+                points_balance_after,
+                description
+            )
+            SELECT
+                NEW.customer_id,
+                'tier_upgrade',
+                0,
+                NEW.loyalty_points,
+                CONCAT('Upgraded to ',
+                    (SELECT tier_name FROM loyalty_tiers
+                     WHERE tier_id = v_new_tier_id),
+                ' tier')
+            FROM dual;
+
+        END IF;
+    END IF;
+END$$
+
+DELIMITER;
 
 
 
