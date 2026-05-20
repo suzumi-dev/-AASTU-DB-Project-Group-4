@@ -7,8 +7,8 @@
 - Betelhem Nurlachew - ‎Business Analyst
 - Afomiya Aschenaki- Database Designer
 - Aksah Atlaw- Data Population & Query Implementation
-
-   
+- Bereket Derese- Business Analyst
+  
 ## Description
 This project is an advanced Food Delivery Management System designed to streamline the interaction between customers, restaurants, and delivery personnel within a single platform. The system manages the complete order lifecycle—from browsing menus and placing orders to real-time order tracking and delivery fulfillment.
 
