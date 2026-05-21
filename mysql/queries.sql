@@ -159,11 +159,10 @@ INSERT INTO anomaly_flags (customer_id, order_id, driver_id, flag_type, severity
 (NULL, NULL, 3, 'suspicious_location', 'high', 'Driver location ping shows impossible travel speed between two checkpoints', FALSE);   
 
 
--- ============================================
 -- VIEW 1: ORDER SUMMARY VIEW
 -- shows every order with customer name,
 -- restaurant name, driver name and status
--- ============================================
+
 
 CREATE VIEW vw_order_summary AS
 SELECT
@@ -186,11 +185,10 @@ JOIN customers c ON o.customer_id = c.customer_id
 JOIN restaurants r ON o.restaurant_id = r.restaurant_id
 LEFT JOIN drivers d ON o.driver_id = d.driver_id;
 
--- ============================================
 -- VIEW 2: DELIVERY PREDICTION ACCURACY VIEW
 -- compares predicted vs actual delivery time
 -- and calculates accuracy percentage
--- ============================================
+
 
 CREATE VIEW vw_prediction_accuracy AS
 SELECT
@@ -216,12 +214,10 @@ FROM delivery_predictions dp
 JOIN orders o ON dp.order_id = o.order_id
 JOIN restaurants r ON o.restaurant_id = r.restaurant_id;
 
--- ============================================
+
 -- VIEW 3: RESTAURANT PERFORMANCE VIEW
 -- shows each restaurant's average scores,
 -- total orders and average prep accuracy
--- ============================================
-
 CREATE VIEW vw_restaurant_performance AS
 SELECT
     r.restaurant_id,
@@ -239,11 +235,10 @@ LEFT JOIN orders o ON r.restaurant_id = o.restaurant_id
 LEFT JOIN ratings rat ON o.order_id = rat.order_id
 GROUP BY r.restaurant_id, r.name, ct.cuisine_name;
 
--- ============================================
 -- VIEW 4: DRIVER PERFORMANCE VIEW
 -- shows each driver's delivery stats,
 -- average scores and assignment breakdown
--- ============================================
+
 
 CREATE VIEW vw_driver_performance AS
 SELECT
@@ -268,11 +263,11 @@ GROUP BY d.driver_id, d.first_name, d.last_name, vt.vehicle_name,
 
 DELIMITER $$
 
--- ============================================
+
 -- PROCEDURE 1: ASSIGN BEST DRIVER
 -- scores all available drivers for an order
 -- and assigns the highest scoring one
--- ============================================
+
 
 CREATE PROCEDURE sp_assign_best_driver(IN p_order_id INT)
 BEGIN
@@ -325,11 +320,10 @@ BEGIN
            p_order_id, ' with score ', v_best_score) AS result;
 END$$
 
--- ============================================
+
 -- PROCEDURE 2: CALCULATE DELIVERY PREDICTION
 -- computes estimated delivery time using
 -- multiple factors and stores the result
--- ============================================
 
 CREATE PROCEDURE sp_calculate_delivery_prediction(IN p_order_id INT)
 BEGIN
@@ -396,11 +390,10 @@ BEGIN
            ' minutes for order ', p_order_id) AS result;
 END$$
 
--- ============================================
+
 -- PROCEDURE 3: DETECT ANOMALIES
 -- checks all orders for suspicious patterns
 -- and inserts flags into anomaly_flags table
--- ============================================
 
 CREATE PROCEDURE sp_detect_anomalies()
 BEGIN
