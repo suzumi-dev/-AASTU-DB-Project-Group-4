@@ -5,7 +5,7 @@
 - Betelhem Solomon — Backend/Implementation
 - Mading Majok - Project Coordinator 
 - Betelhem Nurlachew - ‎Business Analyst
-- Afomiya Aschenaki- Database Designer
+- Afomiya Aschenaki- Database Designer & Query Implementation 
 - Aksah Atlaw- Data Population & Query Implementation
 - Bereket Derese- Business Analyst
   
